@@ -27,59 +27,29 @@
             justify-content: center;
             cursor: pointer;
         }
-
-        #players {
-            margin-bottom: 20px;
-        }
     </style>
 </head>
 <body>
 
     <h1>Tic-Tac-Toe</h1>
 
-    <div id="players">
-        <label for="playerX">Player X Name:</label>
-        <input type="text" id="playerX" placeholder="Player X">
-
-        <label for="playerO">Player O Name:</label>
-        <input type="text" id="playerO" placeholder="Player O">
-
-        <button onclick="startGame()">Start Game</button>
-    </div>
-
     <div id="board"></div>
     <button onclick="resetGame()">Reset Game</button>
 
     <script>
         // Game variables
-        let playerX;
-        let playerO;
-        let currentPlayer;
+        let currentPlayer = 'X';
         let board = ['', '', '', '', '', '', '', '', ''];
-        let gameActive = false;
-
-        function startGame() {
-            playerX = document.getElementById('playerX').value || 'Player X';
-            playerO = document.getElementById('playerO').value || 'Player O';
-            currentPlayer = 'X';
-            gameActive = true;
-
-            document.getElementById('players').style.display = 'none';
-            createBoard();
-        }
+        let gameActive = true;
 
         // Create the game board
-        function createBoard() {
-            const boardElement = document.getElementById('board');
-            boardElement.innerHTML = '';
-
-            for (let i = 0; i < 9; i++) {
-                const cell = document.createElement('div');
-                cell.classList.add('cell');
-                cell.dataset.index = i;
-                cell.addEventListener('click', handleCellClick);
-                boardElement.appendChild(cell);
-            }
+        const boardElement = document.getElementById('board');
+        for (let i = 0; i < 9; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.dataset.index = i;
+            cell.addEventListener('click', handleCellClick);
+            boardElement.appendChild(cell);
         }
 
         // Handle cell click
@@ -95,7 +65,7 @@
 
                 // Check for a winner or a tie
                 if (checkWinner()) {
-                    alert(`${getPlayerName(currentPlayer)} wins!`);
+                    alert(`Player ${currentPlayer} wins!`);
                     gameActive = false;
                 } else if (checkTie()) {
                     alert('It\'s a tie!');
@@ -138,18 +108,12 @@
             return !board.includes('') && !checkWinner();
         }
 
-        // Get player name based on the symbol (X or O)
-        function getPlayerName(symbol) {
-            return symbol === 'X' ? playerX : playerO;
-        }
-
         // Reset the game
         function resetGame() {
-            document.getElementById('players').style.display = 'block';
-            gameActive = false;
-            document.getElementById('playerX').value = '';
-            document.getElementById('playerO').value = '';
-            document.getElementById('board').innerHTML = '';
+            currentPlayer = 'X';
+            board = ['', '', '', '', '', '', '', '', ''];
+            gameActive = true;
+            updateBoard();
         }
     </script>
 
