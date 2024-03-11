@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 4px;
+            margin: 20px auto;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            border: 2px solid #333;
+            font-size: 2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        #players {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Tic-Tac-Toe</h1>
+
+    <div id="players">
+        <label for="playerX">Player X Name:</label>
+        <input type="text" id="playerX" placeholder="Player X">
+
+        <label for="playerO">Player O Name:</label>
+        <input type="text" id="playerO" placeholder="Player O">
+
+        <button onclick="startGame()">Start Game</button>
+    </div>
+
+    <div id="board"></div>
+    <button onclick="resetGame()">Reset Game</button>
+
+    <script>
+        // Game variables
+        let playerX;
+        let playerO;
+        let currentPlayer;
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let gameActive = false;
+
+        function startGame() {
+            playerX = document.getElementById('playerX').value || 'Player X';
+            playerO = document.getElementById('playerO').value || 'Player O';
+            currentPlayer = 'X';
+            gameActive = true;
+
+            document.getElementById('players').style.display = 'none';
+            createBoard();
+        }
+
+        // Create the game board
+        function createBoard() {
+            const boardElement = document.getElementById('board');
+            boardElement.innerHTML = '';
+
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.index = i;
+                cell.addEventListener('click', handleCellClick);
+                boardElement.appendChild(cell);
+            }
+        }
+
+        // Handle cell click
+        function handleCellClick(event) {
+            const clickedCell = event.target;
+            const cellIndex = clickedCell.dataset.index;
+
+            // Check if the cell is already occupied or the game is over
+            if (!board[cellIndex] && gameActive) {
+                // Update the board and display
+                board[cellIndex] = currentPlayer;
+                updateBoard();
+
+                // Check for a winner or a tie
+                if (checkWinner()) {
+                    alert(`${getPlayerName(currentPlayer)} wins!`);
+                    gameActive = false;
+                } else if (checkTie()) {
+                    alert('It\'s a tie!');
+                    gameActive = false;
+                } else {
+                    // Switch to the next player
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                }
+            }
+        }
+
+        // Update the board display
+        function updateBoard() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach((cell, index) => {
+                cell.textContent = board[index];
+            });
+        }
+
+        // Check for a winner
+        function checkWinner() {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],  // Rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],  // Columns
+                [0, 4, 8], [2, 4, 6]               // Diagonals
+            ];
+
+            for (const pattern of winPatterns) {
+                const [a, b, c] = pattern;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // Check for a tie
+        function checkTie() {
+            return !board.includes('') && !checkWinner();
+        }
+
+        // Get player name based on the symbol (X or O)
+        function getPlayerName(symbol) {
+            return symbol === 'X' ? playerX : playerO;
+        }
+
+        // Reset the game
+        function resetGame() {
+            document.getElementById('players').style.display = 'block';
+            gameActive = false;
+            document.getElementById('playerX').value = '';
+            document.getElementById('playerO').value = '';
+            document.getElementById('board').innerHTML = '';
+        }
+    </script>
+
+</body>
+</html>
